@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
 	private bool gameOver;
 	private bool restart;
 	private int waves;
+	private int level;
 
 	void Start ()
 	{
@@ -27,10 +28,9 @@ public class GameController : MonoBehaviour
 		restart = false;
 		restartText.text = "";
 		gameOverText.text = "";
-		scoreText.text = "Score: 0";
-		waveCountText.text = "Waves: 0";
 		waves = 0;
-
+		level = 0;
+		UpdateWaveText ();
 		UpdateScore ();
 		StartCoroutine (SpawnWaves ());
 	}
@@ -52,15 +52,16 @@ public class GameController : MonoBehaviour
 		while (true)
 		{
 			waves++;
-			for (int i = 0; i < hazardCount; i++)
+			LevelSettings levelSettings = LevelSettings.getLevelSettings (level);
+			for (int i = 0; i < levelSettings.hazardCount; i++)
 			{
 				Vector3 spawnPosition = new Vector3 (Random.Range (-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
 				Quaternion spawnRotation = Quaternion.identity;
 				Instantiate (hazard, spawnPosition, spawnRotation);
-				yield return new WaitForSeconds (spawnWait);
+				yield return new WaitForSeconds (levelSettings.spawnWait);
 			}
 			yield return new WaitForSeconds (waveWait);
-			waveCountText.text = "Waves:" + waves;
+			UpdateWaveText ();
 
 			if (gameOver)
 			{
@@ -74,6 +75,7 @@ public class GameController : MonoBehaviour
 	public void AddScore (int newScoreValue)
 	{
 		score += newScoreValue;	
+		level = (int)(score * 1.0 / 50.0);
 		UpdateScore ();
 	}
 
@@ -87,8 +89,13 @@ public class GameController : MonoBehaviour
 		
 	void UpdateScore ()
 	{
-		scoreText.text = "Score: " + score;
+		scoreText.text = "Score: " + score + "\nLevel: " + level;
 	}
+
+	void UpdateWaveText () {
+		waveCountText.text = "Waves:" + waves;
+	}
+		
 
 
 }
