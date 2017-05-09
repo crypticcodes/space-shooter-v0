@@ -13,11 +13,12 @@ public class GameController : MonoBehaviour
 	public GUIText scoreText;
 	public GUIText restartText;
 	public GUIText gameOverText;
-
+	public GUIText waveCountText;
 
 	private int score;
 	private bool gameOver;
 	private bool restart;
+	private int waves;
 
 	void Start ()
 	{
@@ -26,6 +27,9 @@ public class GameController : MonoBehaviour
 		restart = false;
 		restartText.text = "";
 		gameOverText.text = "";
+		scoreText.text = "Score: 0";
+		waveCountText.text = "Waves: 0";
+		waves = 0;
 
 		UpdateScore ();
 		StartCoroutine (SpawnWaves ());
@@ -47,6 +51,7 @@ public class GameController : MonoBehaviour
 		yield return new WaitForSeconds (startWait);
 		while (true)
 		{
+			waves++;
 			for (int i = 0; i < hazardCount; i++)
 			{
 				Vector3 spawnPosition = new Vector3 (Random.Range (-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
@@ -55,10 +60,11 @@ public class GameController : MonoBehaviour
 				yield return new WaitForSeconds (spawnWait);
 			}
 			yield return new WaitForSeconds (waveWait);
+			waveCountText.text = "Waves:" + waves;
 
 			if (gameOver)
 			{
-				restartText.text = "Use <space> to fire at the asteroids\n" + "Press 'R' for Restart";
+				restartText.text = "Destroy or avoid the asteroids to survive\n" + "Use <arrow> keys to move the spaceship\n" + "Use <space> key to fire at the asteroids\n" + "'R' for restart";
 				restart = true;
 				break;
 			}
